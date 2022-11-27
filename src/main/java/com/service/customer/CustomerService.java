@@ -1,6 +1,7 @@
 package com.service.customer;
 
 import com.model.customer.Customer;
+import com.model.customer.CustomerDto;
 import com.repository.customer.CustomerRepository;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -15,7 +16,10 @@ public class CustomerService {
         this.customerRepository = customerRepository;
     }
 
-    public boolean save(Customer customer) {
+    public Customer save(CustomerDto customerdto) {
+
+        Customer customer = new Customer(customerdto.getFirstName(), customerdto.getLastName(),
+                customerdto.getFiscalCode(), customerdto.getAddress());
 
         return customerRepository.save(customer);
     }
@@ -25,7 +29,7 @@ public class CustomerService {
         return customerRepository.getByFiscalCode(fiscalCode);
     }
 
-    public boolean remove(String fiscalCode) {
+    public Boolean remove(String fiscalCode) {
 
         return customerRepository.remove(fiscalCode);
     }

@@ -11,10 +11,10 @@ public class CustomerRepository {
 
     Map<String, Customer> customers = new LinkedHashMap<>();
 
-    public boolean save(Customer customer) {
+    public Customer save(Customer customer) {
 
         customers.put(customer.getFiscalCode(), customer);
-        return customers.containsKey(customer.getFiscalCode());
+        return customers.get(customer.getFiscalCode());
 
     }
 
@@ -23,10 +23,10 @@ public class CustomerRepository {
         return customers.get(fiscalCode);
     }
 
-    public boolean remove(String fiscalCode) {
+    public Boolean remove(String fiscalCode) {
 
-        customers.remove(fiscalCode);
-        return !customers.containsKey(fiscalCode);
+        Customer customer = customers.remove(fiscalCode);
+        return customer != null;
 
     }
 
