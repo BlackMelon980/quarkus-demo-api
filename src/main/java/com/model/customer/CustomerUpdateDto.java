@@ -11,6 +11,14 @@ public class CustomerUpdateDto {
     @NotBlank
     private String address;
 
+    public CustomerUpdateDto() {
+    }
+
+    public CustomerUpdateDto(String fiscalCode, String address) {
+        this.fiscalCode = fiscalCode;
+        this.address = address;
+    }
+
     public String getFiscalCode() {
         return fiscalCode;
     }

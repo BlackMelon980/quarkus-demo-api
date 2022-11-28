@@ -15,6 +15,16 @@ public class CustomerDto {
     @NotBlank
     private String address;
 
+    public CustomerDto() {
+    }
+
+    public CustomerDto(String firstName, String lastName, String fiscalCode, String address) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.fiscalCode = fiscalCode;
+        this.address = address;
+    }
+
     public String getFirstName() {
         return firstName;
     }

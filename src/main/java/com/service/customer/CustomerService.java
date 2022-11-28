@@ -6,6 +6,8 @@ import com.model.customer.CustomerUpdateDto;
 import com.repository.customer.CustomerRepository;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 
 @ApplicationScoped
 public class CustomerService {
@@ -17,7 +19,7 @@ public class CustomerService {
         this.customerRepository = customerRepository;
     }
 
-    public Customer save(CustomerDto customerdto) {
+    public Customer save(@Valid CustomerDto customerdto) {
 
         Customer customer = new Customer(customerdto.getFirstName(), customerdto.getLastName(),
                 customerdto.getFiscalCode(), customerdto.getAddress());
@@ -25,21 +27,23 @@ public class CustomerService {
         return customerRepository.save(customer);
     }
 
-    public Customer getByFiscalCode(String fiscalCode) {
+    public Customer getByFiscalCode(@NotBlank(message = "FiscalCode may not be blank") String fiscalCode) {
 
         return customerRepository.getByFiscalCode(fiscalCode);
     }
 
-    public Boolean remove(String fiscalCode) {
+    public Boolean remove(@NotBlank(message = "FiscalCode may not be blank") String fiscalCode) {
 
         return customerRepository.remove(fiscalCode);
     }
 
-    public Customer update(CustomerUpdateDto customerUpdateDto) {
+    public Customer update(@Valid CustomerUpdateDto customerUpdateDto) {
 
         Customer customer = customerRepository.getByFiscalCode(customerUpdateDto.getFiscalCode());
+        if (customer == null) {
+            return null;
+        }
         customer.setAddress(customerUpdateDto.getAddress());
-        
         return customerRepository.save(customer);
     }
 }

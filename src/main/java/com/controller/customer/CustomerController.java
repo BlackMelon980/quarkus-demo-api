@@ -5,8 +5,6 @@ import com.model.customer.CustomerDto;
 import com.model.customer.CustomerUpdateDto;
 import com.service.customer.CustomerService;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -23,7 +21,7 @@ public class CustomerController {
     }
 
     @POST
-    public Response saveCustomer(@Valid CustomerDto customerDto) {
+    public Response saveCustomer(CustomerDto customerDto) {
 
         Customer customer = customerService.save(customerDto);
 
@@ -37,7 +35,7 @@ public class CustomerController {
     }
 
     @GET
-    public Response getCustomer(@QueryParam("fiscalcode") @NotBlank(message = "FiscalCode may not be blank") String fiscalCode) {
+    public Response getCustomer(@QueryParam("fiscalcode") String fiscalCode) {
 
         Customer customer = customerService.getByFiscalCode(fiscalCode);
         if (customer == null) {
@@ -49,7 +47,7 @@ public class CustomerController {
     }
 
     @PUT
-    public Response updateCustomer(@Valid CustomerUpdateDto customerUpdateDto) {
+    public Response updateCustomer(CustomerUpdateDto customerUpdateDto) {
 
         Customer customer = customerService.update(customerUpdateDto);
         if (customer == null) {
@@ -61,7 +59,7 @@ public class CustomerController {
     }
 
     @DELETE
-    public Response deleteCustomer(@QueryParam("fiscalcode") @NotBlank(message = "FiscalCode may not be blank") String fiscalCode) {
+    public Response deleteCustomer(@QueryParam("fiscalcode") String fiscalCode) {
 
         Boolean isDeleted = customerService.remove(fiscalCode);
         return isDeleted ? Response.status(Response.Status.NO_CONTENT).build() : Response.status(Response.Status.NOT_FOUND).build();
