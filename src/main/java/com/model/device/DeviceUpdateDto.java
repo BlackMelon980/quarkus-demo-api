@@ -1,25 +1,30 @@
 package com.model.device;
 
-import java.util.UUID;
+import com.model.RegexConfig;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 public class DeviceUpdateDto {
+    @NotBlank
+    @Pattern(regexp = RegexConfig.UUID_REGEX)
+    private String uuid;
+    @NotBlank
+    private String state;
 
-    private UUID uuid;
-    private DeviceState state;
-
-    public UUID getUuid() {
+    public String getUuid() {
         return uuid;
     }
 
-    public void setUuid(UUID uuid) {
+    public void setUuid(String uuid) {
         this.uuid = uuid;
     }
 
-    public DeviceState getState() {
+    public String getState() {
         return state;
     }
 
-    public void setState(DeviceState state) {
+    public void setState(String state) {
         this.state = state;
     }
 }

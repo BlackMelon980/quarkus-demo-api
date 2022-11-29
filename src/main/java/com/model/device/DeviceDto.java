@@ -1,9 +1,14 @@
 package com.model.device;
 
-public class DeviceDto {
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
+public class DeviceDto {
+    @NotBlank
     private String customerId;
-    private DeviceState state;
+    @NotBlank
+    @Pattern(regexp = "ACTIVE|INACTIVE|LOST")
+    private String state;
 
     public String getCustomerId() {
         return customerId;
@@ -13,11 +18,11 @@ public class DeviceDto {
         this.customerId = customerId;
     }
 
-    public DeviceState getState() {
+    public String getState() {
         return state;
     }
 
-    public void setState(DeviceState state) {
+    public void setState(String state) {
         this.state = state;
     }
 }
