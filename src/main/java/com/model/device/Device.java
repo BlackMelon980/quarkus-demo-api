@@ -4,7 +4,7 @@ import java.util.UUID;
 
 public class Device {
 
-    private UUID uuid = UUID.randomUUID();
+    private final UUID uuid = UUID.randomUUID();
     private final String customerId;
     private DeviceState state;
 

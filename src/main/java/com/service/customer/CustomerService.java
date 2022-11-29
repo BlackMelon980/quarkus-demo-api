@@ -19,10 +19,10 @@ public class CustomerService {
         this.customerRepository = customerRepository;
     }
 
-    public Customer save(@Valid CustomerDto customerdto) {
+    public Customer save(@Valid CustomerDto customerDto) {
 
-        Customer customer = new Customer(customerdto.getFirstName(), customerdto.getLastName(),
-                customerdto.getFiscalCode(), customerdto.getAddress());
+        Customer customer = new Customer(customerDto.getFirstName(), customerDto.getLastName(),
+                customerDto.getFiscalCode(), customerDto.getAddress());
 
         return customerRepository.save(customer);
     }
