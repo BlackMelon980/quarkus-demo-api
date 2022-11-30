@@ -12,6 +12,14 @@ public class DeviceUpdateDto {
     @NotBlank
     private String state;
 
+    public DeviceUpdateDto() {
+    }
+
+    public DeviceUpdateDto(String uuid, String state) {
+        this.uuid = uuid;
+        this.state = state;
+    }
+
     public String getUuid() {
         return uuid;
     }

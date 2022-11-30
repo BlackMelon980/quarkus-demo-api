@@ -11,6 +11,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import java.util.List;
 import java.util.UUID;
 
 @ApplicationScoped
@@ -24,6 +25,11 @@ public class DeviceService {
 
     public Device save(@Valid DeviceDto deviceDto) {
 
+        List<Device> customerDevices = deviceRepository.getDevicesByCustomerId(deviceDto.getCustomerId());
+        if (customerDevices.size() >= 2) {
+            return null;
+        }
+
         Device device = new Device(deviceDto.getCustomerId(), DeviceState.valueOf(deviceDto.getState()));
         return deviceRepository.save(device);
 
@@ -32,6 +38,12 @@ public class DeviceService {
     public Device getByUUID(@Pattern(regexp = RegexConfig.UUID_REGEX) @NotBlank String uuid) {
 
         return deviceRepository.getByUUID(UUID.fromString(uuid));
+
+    }
+
+    public List<Device> getByCustomerId(String customerId) {
+
+        return deviceRepository.getDevicesByCustomerId(customerId);
 
     }
 
@@ -53,4 +65,6 @@ public class DeviceService {
         return deviceRepository.remove(UUID.fromString(uuid));
 
     }
+
+
 }

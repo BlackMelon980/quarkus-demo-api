@@ -102,8 +102,9 @@ public class CustomerServiceTest {
     @Test
     void cantGetCustomerWithWrongFiscalCode() {
 
-        Customer customer = customerService.getByFiscalCode("CPDFNC96L42F839M123");
-        Assertions.assertNull(customer);
+        Assertions.assertThrows(Exception.class, () -> {
+            customerService.getByFiscalCode("CPDFNC96L42F839M123");
+        });
 
     }
 

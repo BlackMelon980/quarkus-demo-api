@@ -1,13 +1,16 @@
 package com.controller.device;
 
+import com.model.customer.Customer;
 import com.model.device.Device;
 import com.model.device.DeviceDto;
 import com.model.device.DeviceUpdateDto;
+import com.service.customer.CustomerService;
 import com.service.device.DeviceService;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
 
 @Path("/devices")
 @Produces(MediaType.APPLICATION_JSON)
@@ -15,18 +18,26 @@ import javax.ws.rs.core.Response;
 public class DeviceController {
 
     DeviceService deviceService;
+    CustomerService customerService;
 
-    public DeviceController(DeviceService deviceService) {
+    public DeviceController(DeviceService deviceService, CustomerService customerService) {
         this.deviceService = deviceService;
+        this.customerService = customerService;
     }
 
     @POST
     public Response saveDevice(DeviceDto deviceDto) {
 
+        Customer customer = customerService.getByFiscalCode(deviceDto.getCustomerId());
+        if (customer == null) {
+
+            return Response.status(Response.Status.BAD_REQUEST.getStatusCode()).entity("Customer with fiscal code: " + deviceDto.getCustomerId() + " does not exist.").build();
+        }
+
         Device device = deviceService.save(deviceDto);
         if (device == null) {
 
-            return Response.status(Response.Status.BAD_REQUEST.getStatusCode()).entity("Error saving device.").build();
+            return Response.status(Response.Status.BAD_REQUEST.getStatusCode()).entity("Too many devices for customer with id: " + deviceDto.getCustomerId()).build();
         }
 
         return Response.ok(device).build();
@@ -43,6 +54,19 @@ public class DeviceController {
         }
 
         return Response.ok(device).build();
+
+    }
+
+    @GET
+    @Path("/getByCustomer")
+    public Response getDevicesByCustomer(@QueryParam("customerId") String customerId) {
+
+        List<Device> devices = deviceService.getByCustomerId(customerId);
+        if (devices.isEmpty()) {
+            return Response.status(Response.Status.NOT_FOUND).entity("No devices for customer with id: " + customerId).build();
+        }
+
+        return Response.ok(devices).build();
 
     }
 

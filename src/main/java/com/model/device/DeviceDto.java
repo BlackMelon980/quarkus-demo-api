@@ -10,6 +10,14 @@ public class DeviceDto {
     @Pattern(regexp = "ACTIVE|INACTIVE|LOST")
     private String state;
 
+    public DeviceDto() {
+    }
+
+    public DeviceDto(String customerId, String state) {
+        this.customerId = customerId;
+        this.state = state;
+    }
+
     public String getCustomerId() {
         return customerId;
     }

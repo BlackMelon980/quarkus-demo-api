@@ -4,8 +4,10 @@ import com.model.device.Device;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class DeviceRepository {
@@ -32,4 +34,9 @@ public class DeviceRepository {
 
     }
 
+    public List<Device> getDevicesByCustomerId(String customerId) {
+
+        return devices.values().stream().filter(d -> d.getCustomerId().equals(customerId)).collect(Collectors.toList());
+
+    }
 }
