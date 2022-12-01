@@ -2,6 +2,7 @@ package com.controller.customer;
 
 import com.model.RegexConfig;
 import com.model.customer.Customer;
+import com.model.customer.CustomerDevicesResponse;
 import com.model.customer.CustomerDto;
 import com.model.customer.CustomerUpdateDto;
 import com.service.customer.CustomerService;
@@ -55,6 +56,21 @@ public class CustomerController {
         }
 
         return Response.ok(customer).build();
+    }
+
+    @GET
+    @Path("/devices")
+    public Response getCustomerAndDevices(@QueryParam("fiscalcode") @NotBlank @Pattern(regexp = RegexConfig.FISCAL_CODE_REGEX) String fiscalCode) {
+
+        LOG.info("Called get customer and devices by fiscalCode: " + fiscalCode);
+        CustomerDevicesResponse response = customerService.getCustomerAndDevices(fiscalCode);
+        if (response == null) {
+
+            LOG.error("Customer with fiscalcode: " + fiscalCode + " does not exist.");
+            return Response.status(Response.Status.NOT_FOUND).entity("Customer with fiscalcode: " + fiscalCode + " does not exist.").build();
+        }
+
+        return Response.ok(response).build();
     }
 
     @PUT

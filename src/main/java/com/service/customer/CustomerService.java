@@ -2,8 +2,10 @@ package com.service.customer;
 
 import com.model.RegexConfig;
 import com.model.customer.Customer;
+import com.model.customer.CustomerDevicesResponse;
 import com.model.customer.CustomerDto;
 import com.model.customer.CustomerUpdateDto;
+import com.model.device.Device;
 import com.repository.customer.CustomerRepository;
 import com.service.device.DeviceService;
 import org.slf4j.Logger;
@@ -12,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import javax.enterprise.context.ApplicationScoped;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import java.util.List;
 
 @ApplicationScoped
 public class CustomerService {
@@ -60,5 +63,20 @@ public class CustomerService {
         }
         customer.setAddress(customerUpdateDto.getAddress());
         return customerRepository.save(customer);
+    }
+
+    public CustomerDevicesResponse getCustomerAndDevices(String fiscalCode) {
+
+        LOG.info("Called service method to get customer with devices");
+        Customer customer = customerRepository.getByFiscalCode(fiscalCode);
+        if (customer == null) {
+
+            LOG.error("Customer with fiscalCode: " + fiscalCode + " does not exist.");
+            return null;
+        }
+
+        List<Device> devices = deviceService.getByCustomerId(fiscalCode);
+        return new CustomerDevicesResponse(customer, devices);
+
     }
 }

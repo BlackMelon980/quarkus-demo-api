@@ -128,6 +128,42 @@ public class CustomerControllerTest {
     }
 
     @Test
+    void shouldFindCustomerAndDevices() {
+
+        given()
+                .param("fiscalCode", "CPDFNC96L42F839M")
+                .contentType(ContentType.JSON)
+                .when().get("/devices")
+                .then()
+                .statusCode(200);
+
+    }
+
+    @Test
+    void shouldNotFindCustomerAndDevicesWithWrongFiscalCode() {
+
+        given()
+                .param("fiscalCode", "CPDFNC96L42F839R")
+                .contentType(ContentType.JSON)
+                .when().get("/devices")
+                .then()
+                .statusCode(404);
+
+    }
+
+    @Test
+    void shouldNotFindCustomerAndDevicesWithInvalidFiscalCode() {
+
+        given()
+                .param("fiscalCode", "1234567")
+                .contentType(ContentType.JSON)
+                .when().get("/devices")
+                .then()
+                .statusCode(400);
+
+    }
+
+    @Test
     void shouldUpdateCustomer() {
 
         CustomerUpdateDto customerUpdateDto = new CustomerUpdateDto("CPDFNC96L42F839M", "Via Roma");
