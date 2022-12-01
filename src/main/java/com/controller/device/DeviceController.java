@@ -1,12 +1,16 @@
 package com.controller.device;
 
-import com.model.customer.Customer;
+import com.model.RegexConfig;
 import com.model.device.Device;
 import com.model.device.DeviceDto;
 import com.model.device.DeviceUpdateDto;
-import com.service.customer.CustomerService;
 import com.service.device.DeviceService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -18,38 +22,36 @@ import java.util.List;
 public class DeviceController {
 
     DeviceService deviceService;
-    CustomerService customerService;
+    final Logger LOG = LoggerFactory.getLogger(String.valueOf(getClass()));
 
-    public DeviceController(DeviceService deviceService, CustomerService customerService) {
+    public DeviceController(DeviceService deviceService) {
         this.deviceService = deviceService;
-        this.customerService = customerService;
     }
 
     @POST
-    public Response saveDevice(DeviceDto deviceDto) {
+    public Response saveDevice(@Valid DeviceDto deviceDto) {
 
-        Customer customer = customerService.getByFiscalCode(deviceDto.getCustomerId());
-        if (customer == null) {
-
-            return Response.status(Response.Status.BAD_REQUEST.getStatusCode()).entity("Customer with fiscal code: " + deviceDto.getCustomerId() + " does not exist.").build();
-        }
-
+        LOG.info("Called save device with customerId: " + deviceDto.getCustomerId());
         Device device = deviceService.save(deviceDto);
         if (device == null) {
 
-            return Response.status(Response.Status.BAD_REQUEST.getStatusCode()).entity("Too many devices for customer with id: " + deviceDto.getCustomerId()).build();
+            LOG.info("Error saving device with customerId: " + deviceDto.getCustomerId());
+            return Response.status(Response.Status.BAD_REQUEST.getStatusCode()).entity("Error saving device with customerId: " + deviceDto.getCustomerId()).build();
         }
 
+        LOG.info("Device has been saved with success.");
         return Response.ok(device).build();
 
     }
 
     @GET
-    public Response getDeviceByUUID(@QueryParam("uuid") String uuid) {
+    public Response getDeviceByUUID(@QueryParam("uuid") @Pattern(regexp = RegexConfig.UUID_REGEX) @NotBlank String uuid) {
 
+        LOG.info("Called get device by uuid: " + uuid);
         Device device = deviceService.getByUUID(uuid);
         if (device == null) {
 
+            LOG.error("Device with uuid: " + uuid + " does not exist.");
             return Response.status(Response.Status.NOT_FOUND).entity("Device with uuid: " + uuid + " does not exist.").build();
         }
 
@@ -59,10 +61,13 @@ public class DeviceController {
 
     @GET
     @Path("/getByCustomer")
-    public Response getDevicesByCustomer(@QueryParam("customerId") String customerId) {
+    public Response getDevicesByCustomer(@QueryParam("customerId") @NotBlank String customerId) {
 
+        LOG.info("Called get device by customerId: " + customerId);
         List<Device> devices = deviceService.getByCustomerId(customerId);
         if (devices.isEmpty()) {
+
+            LOG.error("No devices for customer with id: " + customerId);
             return Response.status(Response.Status.NOT_FOUND).entity("No devices for customer with id: " + customerId).build();
         }
 
@@ -71,23 +76,34 @@ public class DeviceController {
     }
 
     @PUT
-    public Response updateDevice(DeviceUpdateDto deviceUpdateDto) {
+    public Response updateDevice(@Valid DeviceUpdateDto deviceUpdateDto) {
 
+        LOG.info("Called update device with uuid: " + deviceUpdateDto.getUuid());
         Device device = deviceService.update(deviceUpdateDto);
         if (device == null) {
 
-            return Response.status(Response.Status.BAD_REQUEST.getStatusCode()).entity("Error saving device.").build();
+            LOG.error("Error saving device with uuid: " + deviceUpdateDto.getUuid());
+            return Response.status(Response.Status.BAD_REQUEST.getStatusCode()).entity("Error saving device with uuid: " + deviceUpdateDto.getUuid()).build();
         }
 
+        LOG.info("Device has been saved with success.");
         return Response.ok(device).build();
 
     }
 
     @DELETE
-    public Response removeDevice(@QueryParam("uuid") String uuid) {
+    public Response removeDevice(@QueryParam("uuid") @Pattern(regexp = RegexConfig.UUID_REGEX) @NotBlank String uuid) {
 
+        LOG.info("Called delete device with uuid: " + uuid);
         Boolean isDeleted = deviceService.remove(uuid);
-        return isDeleted ? Response.status(Response.Status.NO_CONTENT).build() : Response.status(Response.Status.NOT_FOUND).build();
+        if (!isDeleted) {
+
+            LOG.error("Error deleting device");
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        LOG.info("Device removed successfully.");
+        return Response.status(Response.Status.NO_CONTENT).build();
 
     }
 }

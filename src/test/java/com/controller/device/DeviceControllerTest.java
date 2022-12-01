@@ -107,7 +107,7 @@ public class DeviceControllerTest {
                 .contentType(ContentType.JSON)
                 .when().post()
                 .then()
-                .statusCode(500);
+                .statusCode(400);
 
     }
 
@@ -134,7 +134,7 @@ public class DeviceControllerTest {
                 .contentType(ContentType.JSON)
                 .when().post()
                 .then()
-                .statusCode(500);
+                .statusCode(400);
     }
 
     @Test
@@ -147,7 +147,7 @@ public class DeviceControllerTest {
                 .contentType(ContentType.JSON)
                 .when().post()
                 .then()
-                .statusCode(500);
+                .statusCode(400);
 
     }
 
@@ -189,7 +189,7 @@ public class DeviceControllerTest {
                 .contentType(ContentType.JSON)
                 .when().get()
                 .then()
-                .statusCode(500);
+                .statusCode(400);
 
     }
 
@@ -252,7 +252,7 @@ public class DeviceControllerTest {
                 .contentType(ContentType.JSON)
                 .when().put()
                 .then()
-                .statusCode(500);
+                .statusCode(400);
     }
 
     @Test
@@ -265,7 +265,7 @@ public class DeviceControllerTest {
                 .contentType(ContentType.JSON)
                 .when().put()
                 .then()
-                .statusCode(500);
+                .statusCode(400);
 
     }
 
@@ -318,7 +318,7 @@ public class DeviceControllerTest {
                 .contentType(ContentType.JSON)
                 .when().delete()
                 .then()
-                .statusCode(500);
+                .statusCode(400);
 
     }
 

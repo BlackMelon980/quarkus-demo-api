@@ -76,7 +76,7 @@ public class CustomerControllerTest {
                 .contentType(ContentType.JSON)
                 .when().post()
                 .then()
-                .statusCode(500);
+                .statusCode(400);
 
     }
 
@@ -90,7 +90,7 @@ public class CustomerControllerTest {
                 .contentType(ContentType.JSON)
                 .when().post()
                 .then()
-                .statusCode(500);
+                .statusCode(400);
 
     }
 
@@ -114,6 +114,17 @@ public class CustomerControllerTest {
                 .when().get()
                 .then()
                 .statusCode(404);
+    }
+
+    @Test
+    void shouldNotFindCustomerWithInvalidFiscalCode() {
+
+        given()
+                .param("fiscalCode", "1234567")
+                .contentType(ContentType.JSON)
+                .when().get()
+                .then()
+                .statusCode(400);
     }
 
     @Test
@@ -153,8 +164,20 @@ public class CustomerControllerTest {
                 .contentType(ContentType.JSON)
                 .when().put()
                 .then()
-                .statusCode(500);
+                .statusCode(400);
 
+    }
+
+    @Test
+    void shouldNotUpdateCustomerWithInvalidFiscalCode() {
+
+        CustomerUpdateDto customerUpdateDto = new CustomerUpdateDto("1234567", "Via Roma");
+        given()
+                .body(customerUpdateDto)
+                .contentType(ContentType.JSON)
+                .when().put()
+                .then()
+                .statusCode(400);
     }
 
     @Test
@@ -179,5 +202,16 @@ public class CustomerControllerTest {
                 .then()
                 .statusCode(404);
 
+    }
+
+    @Test
+    void shouldNotRemoveCustomerWithInvalidFiscalCode() {
+
+        given()
+                .param("fiscalCode", "123456765")
+                .contentType(ContentType.JSON)
+                .when().delete()
+                .then()
+                .statusCode(400);
     }
 }

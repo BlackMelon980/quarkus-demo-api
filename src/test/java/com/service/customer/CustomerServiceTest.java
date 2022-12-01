@@ -68,26 +68,6 @@ public class CustomerServiceTest {
     }
 
     @Test
-    void shouldNotSaveCustomerWithoutAllParams() {
-
-        CustomerDto customerDto = new CustomerDto("Rosaria", "Capodanno", null, "Viale Europa");
-        Assertions.assertThrows(Exception.class, () -> {
-            customerService.save(customerDto);
-        });
-
-    }
-
-    @Test
-    void cantSaveCustomerWithWrongFiscalcode() {
-
-        CustomerDto customerDto = new CustomerDto("Rosaria", "Capodanno", "CPDFNC96L42F839Msdasd", "Viale Europa");
-        Assertions.assertThrows(Exception.class, () -> {
-            customerService.save(customerDto);
-        });
-
-    }
-
-    @Test
     void shouldFindCustomerByFiscalCode() {
 
         insertFirstCustomerInMap();
@@ -129,31 +109,11 @@ public class CustomerServiceTest {
     }
 
     @Test
-    void cantUpdateCustomerWithoutAllParams() {
-
-        CustomerUpdateDto customerUpdateDto = new CustomerUpdateDto(null, "Via Roma");
-        Assertions.assertThrows(Exception.class, () -> {
-            customerService.update(customerUpdateDto);
-        });
-
-    }
-
-    @Test
     void cantUpdateCustomerWithWrongFiscalCode() {
 
         CustomerUpdateDto customerUpdateDto = new CustomerUpdateDto("CPDFNC96L42F839D", "Via Roma");
         Customer updatedCustomer = customerService.update(customerUpdateDto);
         Assertions.assertNull(updatedCustomer);
-
-    }
-
-    @Test
-    void cantUpdateCustomerWithInvalidFiscalCode() {
-
-        CustomerUpdateDto customerUpdateDto = new CustomerUpdateDto("CPDFNC96L42F839M123", "Via Roma");
-        Assertions.assertThrows(Exception.class, () -> {
-            customerService.update(customerUpdateDto);
-        });
 
     }
 
@@ -170,13 +130,6 @@ public class CustomerServiceTest {
 
         Assertions.assertFalse(customerService.remove("CPDFNC96L42F839D"));
 
-    }
-
-    @Test
-    void cantRemoveCustomerWithInvalidFiscalCode() {
-        Assertions.assertThrows(Exception.class, () -> {
-            customerService.remove("12345");
-        });
     }
 
 }

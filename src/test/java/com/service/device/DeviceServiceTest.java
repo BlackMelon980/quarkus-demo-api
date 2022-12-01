@@ -1,9 +1,11 @@
 package com.service.device;
 
+import com.model.customer.Customer;
 import com.model.device.Device;
 import com.model.device.DeviceDto;
 import com.model.device.DeviceState;
 import com.model.device.DeviceUpdateDto;
+import com.repository.customer.CustomerRepository;
 import com.repository.device.DeviceRepository;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
@@ -28,12 +30,21 @@ public class DeviceServiceTest {
     DeviceService deviceService;
     @InjectMock
     DeviceRepository deviceRepository;
+    @InjectMock
+    CustomerRepository customerRepository;
     Map<UUID, Device> deviceMap;
+    Map<String, Customer> customerMap;
 
     @BeforeEach
     void setUp() {
 
         deviceMap = new HashMap<>();
+        customerMap = new HashMap<>();
+
+        when(customerRepository.getByFiscalCode(any(String.class))).thenAnswer(i -> {
+            String fiscalCode = i.getArgument(0);
+            return customerMap.get(fiscalCode);
+        });
 
         when(deviceRepository.save(any(Device.class))).thenAnswer(i -> {
             Device device = i.getArgument(0);
@@ -65,9 +76,16 @@ public class DeviceServiceTest {
         return device;
     }
 
+    public void insertCustomer() {
+
+        Customer firstCustomer = new Customer("Francesca", "Capodanno", "CPDFNC96L42F839M", "Viale Europa");
+        customerMap.put("CPDFNC96L42F839M", firstCustomer);
+    }
+
     @Test
     void shouldSaveDeviceWithSuccess() {
 
+        insertCustomer();
         DeviceDto deviceDto = new DeviceDto("CPDFNC96L42F839M", "ACTIVE");
         Device device = deviceService.save(deviceDto);
         Assertions.assertEquals("CPDFNC96L42F839M", device.getCustomerId());
@@ -75,18 +93,9 @@ public class DeviceServiceTest {
     }
 
     @Test
-    void shouldNotSaveDeviceWithoutAllParams() {
-
-        DeviceDto deviceDto = new DeviceDto(null, "ACTIVE");
-        Assertions.assertThrows(Exception.class, () -> {
-            deviceService.save(deviceDto);
-        });
-
-    }
-
-    @Test
     void shouldSaveTwoDevices() {
 
+        insertCustomer();
         Device firstDevice = createAndInsertDevice();
         DeviceDto deviceDto = new DeviceDto("CPDFNC96L42F839M", "ACTIVE");
 
@@ -99,6 +108,7 @@ public class DeviceServiceTest {
     @Test
     void shouldNotSaveMoreThanTwoDevices() {
 
+        insertCustomer();
         createAndInsertDevice();
         createAndInsertDevice();
         DeviceDto deviceDto = new DeviceDto("CPDFNC96L42F839M", "ACTIVE");
@@ -115,23 +125,6 @@ public class DeviceServiceTest {
         Device savedDevice = deviceService.getByUUID(firstDevice.getUuid().toString());
         Assertions.assertEquals(firstDevice.getUuid(), savedDevice.getUuid());
 
-    }
-
-    @Test
-    void shouldNotFindDeviceWithInvalidUUID() {
-
-        Assertions.assertThrows(Exception.class, () -> {
-            deviceService.getByUUID("123456");
-        });
-
-    }
-
-    @Test
-    void shouldNotFindDeviceWithUUIDNull() {
-
-        Assertions.assertThrows(Exception.class, () -> {
-            deviceService.getByUUID(null);
-        });
     }
 
     @Test
@@ -174,37 +167,6 @@ public class DeviceServiceTest {
     }
 
     @Test
-    void shouldNotUpdateDeviceWithInvalidUUID() {
-
-        DeviceUpdateDto deviceUpdateDto = new DeviceUpdateDto("12345", "INACTIVE");
-        Assertions.assertThrows(Exception.class, () -> {
-            deviceService.update(deviceUpdateDto);
-        });
-
-    }
-
-    @Test
-    void shouldNotUpdateDeviceWithoutAllParams() {
-
-        DeviceUpdateDto deviceUpdateDto = new DeviceUpdateDto(null, "INACTIVE");
-        Assertions.assertThrows(Exception.class, () -> {
-            deviceService.update(deviceUpdateDto);
-        });
-
-    }
-
-    @Test
-    void shouldNotUpdateDeviceWithInvalidState() {
-
-        Device device = createAndInsertDevice();
-        DeviceUpdateDto deviceUpdateDto = new DeviceUpdateDto(device.getUuid().toString(), "DELETE");
-        Assertions.assertThrows(Exception.class, () -> {
-            deviceService.update(deviceUpdateDto);
-        });
-
-    }
-
-    @Test
     void shouldNotUpdateDeviceWithWrongUUID() {
 
         DeviceUpdateDto deviceUpdateDto = new DeviceUpdateDto("1345cf63-0a6c-4f75-8422-80c38a76b79c", "INACTIVE");
@@ -219,15 +181,6 @@ public class DeviceServiceTest {
         Device device = createAndInsertDevice();
         Boolean isDeleted = deviceService.remove(device.getUuid().toString());
         Assertions.assertTrue(isDeleted);
-
-    }
-
-    @Test
-    void cantRemoveDeviceWithInvalidUUID() {
-
-        Assertions.assertThrows(Exception.class, () -> {
-            deviceService.remove("123456");
-        });
 
     }
 
