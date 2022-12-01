@@ -279,7 +279,7 @@ public class DeviceControllerTest {
                 .contentType(ContentType.JSON)
                 .when().put()
                 .then()
-                .statusCode(500);
+                .statusCode(400);
 
     }
 

@@ -6,6 +6,11 @@ import com.model.customer.CustomerDevicesResponse;
 import com.model.customer.CustomerDto;
 import com.model.customer.CustomerUpdateDto;
 import com.service.customer.CustomerService;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +34,13 @@ public class CustomerController {
     }
 
     @POST
+    @Operation(summary = "Save customer")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "Success",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Customer.class))),
+            @APIResponse(responseCode = "400", description = "Error saving customer"),
+            @APIResponse(responseCode = "500", description = "Internal server error")
+    })
     public Response saveCustomer(@Valid CustomerDto customerDto) {
 
         LOG.info("Called save customer with fiscalCode: " + customerDto.getFiscalCode());
@@ -45,6 +57,13 @@ public class CustomerController {
     }
 
     @GET
+    @Operation(summary = "Retrieve customer", description = "Retrieve a customer by fiscal code.")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "Success",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Customer.class))),
+            @APIResponse(responseCode = "404", description = "Customer does not exist"),
+            @APIResponse(responseCode = "500", description = "Internal server error")
+    })
     public Response getCustomer(@QueryParam("fiscalcode") @NotBlank @Pattern(regexp = RegexConfig.FISCAL_CODE_REGEX) String fiscalCode) {
 
         LOG.info("Called get customer by fiscalCode: " + fiscalCode);
@@ -60,6 +79,13 @@ public class CustomerController {
 
     @GET
     @Path("/devices")
+    @Operation(summary = "Retrieve customer and devices", description = "Retrieve a customer by fiscal code and all associated devices.")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "Success",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = CustomerDevicesResponse.class))),
+            @APIResponse(responseCode = "404", description = "Customer does not exist"),
+            @APIResponse(responseCode = "500", description = "Internal server error")
+    })
     public Response getCustomerAndDevices(@QueryParam("fiscalcode") @NotBlank @Pattern(regexp = RegexConfig.FISCAL_CODE_REGEX) String fiscalCode) {
 
         LOG.info("Called get customer and devices by fiscalCode: " + fiscalCode);
@@ -74,6 +100,13 @@ public class CustomerController {
     }
 
     @PUT
+    @Operation(summary = "Update customer")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "Success",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Customer.class))),
+            @APIResponse(responseCode = "400", description = "Error saving customer"),
+            @APIResponse(responseCode = "500", description = "Internal server error")
+    })
     public Response updateCustomer(@Valid CustomerUpdateDto customerUpdateDto) {
 
         LOG.info("Called update customer with fiscalCode: " + customerUpdateDto.getFiscalCode());
@@ -89,6 +122,12 @@ public class CustomerController {
     }
 
     @DELETE
+    @Operation(summary = "Deletes customer", description = "Delete a customer and all associated devices.")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "204", description = "Success"),
+            @APIResponse(responseCode = "404", description = "Customer does not exist"),
+            @APIResponse(responseCode = "500", description = "Internal server error")
+    })
     public Response deleteCustomer(@QueryParam("fiscalcode") @NotBlank @Pattern(regexp = RegexConfig.FISCAL_CODE_REGEX) String fiscalCode) {
 
         LOG.info("Called delete customer with fiscalCode: " + fiscalCode);

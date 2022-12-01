@@ -26,6 +26,12 @@ Run the application in dev mode:
 mvn quarkus:dev
 ```
 
+Build the application:
+
+```
+mvn install
+```
+
 ## Testing
 
 Use the following command to test the application:
@@ -34,3 +40,7 @@ Use the following command to test the application:
 mvn test
 ```
 
+## Swagger
+
+Once the application is started, you'll be able to consult the API documentation
+at:  **http://localhost:8080/q/swagger-ui**

@@ -10,6 +10,7 @@ public class DeviceUpdateDto {
     @Pattern(regexp = RegexConfig.UUID_REGEX)
     private String uuid;
     @NotBlank
+    @Pattern(regexp = "ACTIVE|INACTIVE|LOST")
     private String state;
 
     public DeviceUpdateDto() {

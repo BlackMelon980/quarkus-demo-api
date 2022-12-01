@@ -5,6 +5,11 @@ import com.model.device.Device;
 import com.model.device.DeviceDto;
 import com.model.device.DeviceUpdateDto;
 import com.service.device.DeviceService;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +34,13 @@ public class DeviceController {
     }
 
     @POST
+    @Operation(summary = "Save device", description = "Save a device. An existing customer's fiscal code is required.")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "Success",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Device.class))),
+            @APIResponse(responseCode = "400", description = "Error saving device"),
+            @APIResponse(responseCode = "500", description = "Internal server error")
+    })
     public Response saveDevice(@Valid DeviceDto deviceDto) {
 
         LOG.info("Called save device with customerId: " + deviceDto.getCustomerId());
@@ -45,6 +57,13 @@ public class DeviceController {
     }
 
     @GET
+    @Operation(summary = "Retrieve device", description = "Retrieve a device by UUID.")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "Success",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Device.class))),
+            @APIResponse(responseCode = "404", description = "device does not exist"),
+            @APIResponse(responseCode = "500", description = "Internal server error")
+    })
     public Response getDeviceByUUID(@QueryParam("uuid") @Pattern(regexp = RegexConfig.UUID_REGEX) @NotBlank String uuid) {
 
         LOG.info("Called get device by uuid: " + uuid);
@@ -61,6 +80,13 @@ public class DeviceController {
 
     @GET
     @Path("/getByCustomer")
+    @Operation(summary = "Retrieve device by customer fiscal code")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "Success",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Device.class))),
+            @APIResponse(responseCode = "404", description = "No devices for customer"),
+            @APIResponse(responseCode = "500", description = "Internal server error")
+    })
     public Response getDevicesByCustomer(@QueryParam("customerId") @NotBlank String customerId) {
 
         LOG.info("Called get device by customerId: " + customerId);
@@ -76,6 +102,13 @@ public class DeviceController {
     }
 
     @PUT
+    @Operation(summary = "Update device")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "Success",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Device.class))),
+            @APIResponse(responseCode = "400", description = "Error saving device"),
+            @APIResponse(responseCode = "500", description = "Internal server error")
+    })
     public Response updateDevice(@Valid DeviceUpdateDto deviceUpdateDto) {
 
         LOG.info("Called update device with uuid: " + deviceUpdateDto.getUuid());
@@ -92,6 +125,12 @@ public class DeviceController {
     }
 
     @DELETE
+    @Operation(summary = "Delete device")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "204", description = "Success"),
+            @APIResponse(responseCode = "404", description = "device does not exist"),
+            @APIResponse(responseCode = "500", description = "Internal server error")
+    })
     public Response removeDevice(@QueryParam("uuid") @Pattern(regexp = RegexConfig.UUID_REGEX) @NotBlank String uuid) {
 
         LOG.info("Called delete device with uuid: " + uuid);
