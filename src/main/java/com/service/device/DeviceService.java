@@ -67,4 +67,23 @@ public class DeviceService {
     }
 
 
+    public Boolean removeCustomerDevices(String customerId) {
+
+        Boolean isDeleted;
+        List<Device> devices = deviceRepository.getDevicesByCustomerId(customerId);
+        if (devices.isEmpty()) {
+            return false;
+        }
+
+        for (Device device : devices) {
+
+            isDeleted = deviceRepository.remove(device.getUuid());
+            if (!isDeleted) {
+                return false;
+            }
+
+        }
+        return true;
+
+    }
 }

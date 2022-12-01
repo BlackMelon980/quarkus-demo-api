@@ -93,7 +93,7 @@ public class DeviceServiceTest {
         Device device = deviceService.save(deviceDto);
         Assertions.assertEquals("CPDFNC96L42F839M", device.getCustomerId());
         Assertions.assertNotEquals(firstDevice.getUuid(), device.getUuid());
-        
+
     }
 
     @Test
@@ -236,6 +236,23 @@ public class DeviceServiceTest {
 
         createAndInsertDevice();
         Boolean isDeleted = deviceService.remove("1345cf63-0a6c-4f75-8422-80c38a76b79c");
+        Assertions.assertFalse(isDeleted);
+
+    }
+
+    @Test
+    void shouldRemoveCustomerDevices() {
+
+        Device device = createAndInsertDevice();
+        Boolean isDeleted = deviceService.removeCustomerDevices(device.getCustomerId());
+        Assertions.assertTrue(isDeleted);
+
+    }
+
+    @Test
+    void shouldNotRemoveCustomerDevicesIfThereAreNotDevices() {
+
+        Boolean isDeleted = deviceService.removeCustomerDevices("CPDFNC96L42F839M");
         Assertions.assertFalse(isDeleted);
 
     }

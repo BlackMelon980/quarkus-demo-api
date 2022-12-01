@@ -4,6 +4,7 @@ import com.model.customer.Customer;
 import com.model.customer.CustomerDto;
 import com.model.customer.CustomerUpdateDto;
 import com.service.customer.CustomerService;
+import com.service.device.DeviceService;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -15,9 +16,11 @@ import javax.ws.rs.core.Response;
 public class CustomerController {
 
     CustomerService customerService;
+    DeviceService deviceService;
 
-    CustomerController(CustomerService customerService) {
+    public CustomerController(CustomerService customerService, DeviceService deviceService) {
         this.customerService = customerService;
+        this.deviceService = deviceService;
     }
 
     @POST
@@ -62,6 +65,16 @@ public class CustomerController {
     public Response deleteCustomer(@QueryParam("fiscalcode") String fiscalCode) {
 
         Boolean isDeleted = customerService.remove(fiscalCode);
-        return isDeleted ? Response.status(Response.Status.NO_CONTENT).build() : Response.status(Response.Status.NOT_FOUND).build();
+        if (!isDeleted) {
+            return Response.status(Response.Status.NOT_FOUND).entity("Customer with fiscal code: " + fiscalCode + " does not exist.").build();
+        }
+
+        Boolean areDevicesDeleted = deviceService.removeCustomerDevices(fiscalCode);
+        if (!areDevicesDeleted) {
+            return Response.status(Response.Status.NO_CONTENT).entity("Customer with fiscal code: " + fiscalCode + " is deleted, but there aren't devices.").build();
+        }
+
+        return Response.status(Response.Status.NO_CONTENT).build();
+
     }
 }

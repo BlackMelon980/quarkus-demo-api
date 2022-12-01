@@ -59,7 +59,7 @@ public class CustomerServiceTest {
     }
 
     @Test
-    void saveCustomerWithSuccess() {
+    void shouldSaveCustomerWithSuccess() {
 
         CustomerDto customerDto = new CustomerDto("Rosaria", "Capodanno", "CPDRSC96L42F839M", "Viale Europa2");
         Customer savedCustomer = customerService.save(customerDto);
@@ -68,7 +68,7 @@ public class CustomerServiceTest {
     }
 
     @Test
-    void cantSaveCustomerWithoutAllParams() {
+    void shouldNotSaveCustomerWithoutAllParams() {
 
         CustomerDto customerDto = new CustomerDto("Rosaria", "Capodanno", null, "Viale Europa");
         Assertions.assertThrows(Exception.class, () -> {
@@ -88,7 +88,7 @@ public class CustomerServiceTest {
     }
 
     @Test
-    void getCustomerByFiscalCode() {
+    void shouldFindCustomerByFiscalCode() {
 
         insertFirstCustomerInMap();
 
@@ -100,7 +100,7 @@ public class CustomerServiceTest {
     }
 
     @Test
-    void cantGetCustomerWithWrongFiscalCode() {
+    void shouldNotFindCustomerWithInvalidFiscalCode() {
 
         Assertions.assertThrows(Exception.class, () -> {
             customerService.getByFiscalCode("CPDFNC96L42F839M123");
@@ -109,7 +109,15 @@ public class CustomerServiceTest {
     }
 
     @Test
-    void updateCustomer() {
+    void shouldNotFindCustomerWithWrongFiscalCode() {
+
+        insertFirstCustomerInMap();
+        Customer customer = customerService.getByFiscalCode("CPDFNC96L42F839R");
+        Assertions.assertNull(customer);
+    }
+
+    @Test
+    void shouldUpdateCustomer() {
 
         insertFirstCustomerInMap();
         CustomerUpdateDto customerUpdateDto = new CustomerUpdateDto("CPDFNC96L42F839M", "Via Roma");
@@ -150,7 +158,7 @@ public class CustomerServiceTest {
     }
 
     @Test
-    void removeCustomer() {
+    void shouldRemoveCustomer() {
 
         insertFirstCustomerInMap();
         Assertions.assertTrue(customerService.remove("CPDFNC96L42F839M"));
@@ -162,6 +170,13 @@ public class CustomerServiceTest {
 
         Assertions.assertFalse(customerService.remove("CPDFNC96L42F839D"));
 
+    }
+
+    @Test
+    void cantRemoveCustomerWithInvalidFiscalCode() {
+        Assertions.assertThrows(Exception.class, () -> {
+            customerService.remove("12345");
+        });
     }
 
 }
